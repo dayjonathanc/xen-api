@@ -2049,6 +2049,13 @@ let update_vm ~__context id =
                       (fun (protocol, _) ->
                         let ref = Ref.make () in
                         let uuid = Uuid.to_string (Uuid.make_uuid ()) in
+                        let uri =
+                          match Xapi_stdext_unix.Unixext.domain_of_addr uri with
+                          | Some Unix.PF_INET6 ->
+                            Http.Url.maybe_wrap_IPv6_literal uri
+                          | _ ->
+                            uri
+                        in
                         let location = Printf.sprintf "%s?uuid=%s" uri uuid in
                         let port =
                           try
